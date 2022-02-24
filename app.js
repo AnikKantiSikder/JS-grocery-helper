@@ -15,6 +15,10 @@ let editId = "";
 // ****** EVENT LISTENERS **********
 // submit form
 form.addEventListener('submit', addItem);
+// clear items
+clearBtn.addEventListener('click', clearItems);
+
+
 
 // ****** FUNCTIONS **********
 
@@ -49,6 +53,8 @@ function addItem(e){
         displayAlert('item added successfully', 'sucess');
         // show container
         groceryContainer.classList.add('show-container');
+        // set back to default
+        setBackToDefault();
     }
     else if(groceryValue !== '' && editFlag === true){
 
@@ -69,6 +75,29 @@ function displayAlert(text, action){
     }, 1000);
 }
 
+// set back to default function
+function setBackToDefault(){
+    grocery.value = '';
+    editFlag = false;
+    editId = '';
+    submitBtn.textContent = 'submit';
+}
+
+// clear items function
+function clearItems(){
+    const items = document.querySelectorAll('.grocery-item');
+    //remove all items from the list
+    if(items.length > 0){
+        items.forEach(function(item){
+            groceryList.removeChild(item);
+        })
+    }
+    // remove the clear items button
+    groceryContainer.classList.remove('show-container');
+    // display sucess alert
+    displayAlert('all items removed successfully', 'success');
+    setBackToDefault();
+}
 
 // ****** LOCAL STORAGE **********
 

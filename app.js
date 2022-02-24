@@ -25,7 +25,30 @@ function addItem(e){
     const id = new Date().getTime().toString();
 
     if(groceryValue !== '' && editFlag === false){
-
+        const element = document.createElement('article');
+        //add class
+        element.classList.add('grocery-item');
+        //add id
+        const attr  = document.createAttribute('data-id');
+        attr.value = id;
+        element.setAttributeNode(attr);
+        element.innerHTML = `
+            <p class="title">${groceryValue}</p>
+            <div class="btn-container">
+            <button type="button" class="edit-btn">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="delete-btn">
+                <i class="fas fa-trash"></i>
+            </button>
+            </div>
+        `;
+        // apend child
+        groceryList.appendChild(element);
+        // display success alert
+        displayAlert('item added successfully', 'sucess');
+        // show container
+        groceryContainer.classList.add('show-container');
     }
     else if(groceryValue !== '' && editFlag === true){
 

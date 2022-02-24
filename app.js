@@ -7,10 +7,6 @@ const groceryContainer = document.querySelector('.grocery-container');
 const groceryList = document.querySelector('.grocery-list');
 const clearBtn = document.querySelector('.clear-btn');
 
-// edit option
-let editElement;
-let editFlag = false;
-let editId = "";
 
 // ****** EVENT LISTENERS **********
 // submit form
@@ -25,6 +21,7 @@ clearBtn.addEventListener('click', clearItems);
 function addItem(e){
     e.preventDefault();
     const groceryValue = grocery.value;
+
     // create unique id for every grocery item using getTime()
     const id = new Date().getTime().toString();
 
@@ -57,14 +54,17 @@ function addItem(e){
         // apend child
         groceryList.appendChild(element);
         // display success alert
-        displayAlert('item added successfully', 'sucess');
+        displayAlert('item added successfully', 'success');
         // show container
         groceryContainer.classList.add('show-container');
         // set back to default
         setBackToDefault();
     }
     else if(groceryValue !== '' && editFlag === true){
-
+        editElement.innerHTML = groceryValue;
+        displayAlert('item updated successfully', 'success');
+        // set back to default
+        setBackToDefault();
     }
     else{
         displayAlert('please enter value', 'danger');
@@ -93,6 +93,8 @@ function setBackToDefault(){
 //delete item function
 function deleteItem(e){
     const element = e.currentTarget.parentElement.parentElement;
+    const id = element.dataset.id;
+    console.log(id);
     groceryList.removeChild(element);
     // remove the clear items button when items is 0
     if(groceryList.children.length === 0){
@@ -102,9 +104,21 @@ function deleteItem(e){
     displayAlert('item removed', 'danger');
     setBackToDefault();
 }
-//edit item function
-function editItem(){
 
+//edit item function
+let editElement;
+let editFlag = false;
+let editId = "";
+
+function editItem(e){
+    const element = e.currentTarget.parentElement.parentElement;
+    //set edit item
+    editElement = e.currentTarget.parentElement.previousElementSibling;
+    //set form value
+    grocery.value = editElement.innerHTML;
+    editFlag = true;
+    editId = element.dataset.id;
+    submitBtn.textContent = 'edit';
 }
 
 // clear items function
@@ -124,5 +138,10 @@ function clearItems(){
 }
 
 // ****** LOCAL STORAGE **********
+function addToLocalStorage(id, value){
 
+}
+function removeFromLocalStorage(id){
+
+}
 // ****** SETUP ITEMS **********

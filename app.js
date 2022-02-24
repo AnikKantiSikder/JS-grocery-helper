@@ -17,13 +17,36 @@ let editId = "";
 form.addEventListener('submit', addItem);
 
 // ****** FUNCTIONS **********
+
 function addItem(e){
     e.preventDefault();
     const groceryValue = grocery.value;
     // create unique id for every grocery item using getTime()
     const id = new Date().getTime().toString();
-    
+
+    if(groceryValue !== '' && editFlag === false){
+
+    }
+    else if(groceryValue !== '' && editFlag === true){
+
+    }
+    else{
+        displayAlert('please enter value', 'danger');
+    }
 }
+
+// display alert function
+function displayAlert(text, action){
+    alert.textContent = text;
+    alert.classList.add(`alert-${action}`);
+    //remove alert
+    setTimeout(function(){
+        alert.textContent = '';
+        alert.classList.remove(`alert-${action}`);
+    }, 1000);
+}
+
+
 // ****** LOCAL STORAGE **********
 
 // ****** SETUP ITEMS **********

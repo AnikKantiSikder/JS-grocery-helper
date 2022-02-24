@@ -47,6 +47,13 @@ function addItem(e){
             </button>
             </div>
         `;
+        // accessing edit and delete button
+        const deleteBtn = element.querySelector('.delete-btn');
+        const editBtn = element.querySelector('.edit-btn');
+        
+        deleteBtn.addEventListener('click', deleteItem);
+        editBtn.addEventListener('click', editItem);
+
         // apend child
         groceryList.appendChild(element);
         // display success alert
@@ -81,6 +88,23 @@ function setBackToDefault(){
     editFlag = false;
     editId = '';
     submitBtn.textContent = 'submit';
+}
+
+//delete item function
+function deleteItem(e){
+    const element = e.currentTarget.parentElement.parentElement;
+    groceryList.removeChild(element);
+    // remove the clear items button when items is 0
+    if(groceryList.children.length === 0){
+        groceryContainer.classList.remove('show-container');
+    }
+    // display success alaert
+    displayAlert('item removed', 'danger');
+    setBackToDefault();
+}
+//edit item function
+function editItem(){
+
 }
 
 // clear items function

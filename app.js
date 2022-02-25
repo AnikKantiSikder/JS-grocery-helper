@@ -13,7 +13,8 @@ const clearBtn = document.querySelector('.clear-btn');
 form.addEventListener('submit', addItem);
 // clear items
 clearBtn.addEventListener('click', clearItems);
-
+// load items
+window.addEventListener('DOMContentLoaded', setupItems);
 
 
 // ****** FUNCTIONS **********
@@ -26,43 +27,21 @@ function addItem(e){
     const id = new Date().getTime().toString();
 
     if(groceryValue !== '' && editFlag === false){
-        const element = document.createElement('article');
-        //add class
-        element.classList.add('grocery-item');
-        //add id
-        const attr  = document.createAttribute('data-id');
-        attr.value = id;
-        element.setAttributeNode(attr);
-        element.innerHTML = `
-            <p class="title">${groceryValue}</p>
-            <div class="btn-container">
-            <button type="button" class="edit-btn">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button type="button" class="delete-btn">
-                <i class="fas fa-trash"></i>
-            </button>
-            </div>
-        `;
-        // accessing edit and delete button
-        const deleteBtn = element.querySelector('.delete-btn');
-        const editBtn = element.querySelector('.edit-btn');
-        
-        deleteBtn.addEventListener('click', deleteItem);
-        editBtn.addEventListener('click', editItem);
-
-        // apend child
-        groceryList.appendChild(element);
+        createListItem(id, groceryValue);
         // display success alert
         displayAlert('item added successfully', 'success');
         // show container
         groceryContainer.classList.add('show-container');
+        // add to local stroge
+        addToLocalStorage(id, groceryValue);
         // set back to default
         setBackToDefault();
     }
     else if(groceryValue !== '' && editFlag === true){
         editElement.innerHTML = groceryValue;
         displayAlert('item updated successfully', 'success');
+        //edit local stroge
+        editLocalStroge(editId, groceryValue);
         // set back to default
         setBackToDefault();
     }
@@ -94,7 +73,6 @@ function setBackToDefault(){
 function deleteItem(e){
     const element = e.currentTarget.parentElement.parentElement;
     const id = element.dataset.id;
-    console.log(id);
     groceryList.removeChild(element);
     // remove the clear items button when items is 0
     if(groceryList.children.length === 0){
@@ -103,6 +81,8 @@ function deleteItem(e){
     // display success alaert
     displayAlert('item removed', 'danger');
     setBackToDefault();
+    //remove item from local stroge
+    removeFromLocalStorage(id);
 }
 
 //edit item function
@@ -135,13 +115,84 @@ function clearItems(){
     // display sucess alert
     displayAlert('all items removed successfully', 'success');
     setBackToDefault();
+    //remove all items from local stroge
+    localStorage.removeItem('list');
 }
 
 // ****** LOCAL STORAGE **********
+function getLocalStorage(){
+    return localStorage.getItem('list') ?
+    JSON.parse(localStorage.getItem('list')):[];
+}
+
 function addToLocalStorage(id, value){
-
+    const grocery = {
+        id: id,
+        value: value
+    };
+    let items = getLocalStorage();
+    items.push(grocery);
+    localStorage.setItem('list', JSON.stringify(items));
 }
+
 function removeFromLocalStorage(id){
-
+    let items = getLocalStorage();
+    items = items.filter(function(item){
+        if(item.id !== id){
+            return item;
+        }
+    });
+    localStorage.setItem('list', JSON.stringify(items));
 }
+
+function editLocalStroge(id, value){
+    let items = getLocalStorage();
+    items = items.map(function(item){
+        if(item.id === id){
+            item.value = value;
+        }
+        return item;
+    });
+    localStorage.setItem('list', JSON.stringify(items));
+}
+
 // ****** SETUP ITEMS **********
+function setupItems(){
+    let items = getLocalStorage();
+    if(items.length > 0){
+        items.forEach(function(item){
+            createListItem(item.id, item.value);
+        });
+        groceryContainer.classList.add('show-container');
+    }
+}
+// function for adding and showing items
+function createListItem(id, groceryValue){
+    const element = document.createElement('article');
+        //add class
+        element.classList.add('grocery-item');
+        //add id
+        const attr  = document.createAttribute('data-id');
+        attr.value = id;
+        element.setAttributeNode(attr);
+        element.innerHTML = `
+            <p class="title">${groceryValue}</p>
+            <div class="btn-container">
+            <button type="button" class="edit-btn">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="delete-btn">
+                <i class="fas fa-trash"></i>
+            </button>
+            </div>
+        `;
+        // accessing edit and delete button
+        const deleteBtn = element.querySelector('.delete-btn');
+        const editBtn = element.querySelector('.edit-btn');
+        
+        deleteBtn.addEventListener('click', deleteItem);
+        editBtn.addEventListener('click', editItem);
+
+        // apend child
+        groceryList.appendChild(element);
+}
